@@ -5,6 +5,6 @@ from books.models import Book
 from books.serializers import BookSerializer
 
 
-class BookView(ModelViewSet):
+class BookViewSet(ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
