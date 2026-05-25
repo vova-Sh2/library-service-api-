@@ -2,6 +2,7 @@ from django.db import transaction
 from django.utils.timezone import now
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -13,10 +14,20 @@ from borrowings.serializers import BorrowingsDetailSerializer, BorrowingsCreateS
 class BorrowingViewSet(ModelViewSet):
     queryset = Borrowing.objects.all()
     serializer_class = BorrowingsSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
         queryset = Borrowing.objects.all()
+        if user.is_staff:
+            user_id = self.request.query_params.get("user_id")
+            if user_id:
+                queryset = queryset.filter(user_id=user_id)
+        is_active = self.request.query_params.get("is_active")
+        if is_active == "True":
+            queryset = queryset.filter(actual_return_date__isnull=True)
+        elif is_active == "False":
+            queryset = queryset.filter(actual_return_date__isnull=False)
         if not user.is_staff:
             queryset = queryset.filter(user=user.id)
         return queryset
