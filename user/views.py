@@ -6,8 +6,8 @@ from user.serializers import UserSerializer
 
 
 class UserCreateViewSet(generics.CreateAPIView):
-    # queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
+    authentication_classes = ()
 
 
 class ManageUserViewSet(generics.RetrieveUpdateAPIView):
