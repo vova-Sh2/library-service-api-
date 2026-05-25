@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "books",
+    "user",
 ]
 
 MIDDLEWARE = [
@@ -119,4 +120,4 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-AUTH_USER_MODEL = "books.User"
+AUTH_USER_MODEL = "user.User"
