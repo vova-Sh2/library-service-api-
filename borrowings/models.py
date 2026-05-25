@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from books.models import Book
@@ -8,8 +9,8 @@ class Borrowing(models.Model):
     borrow_date = models.DateField(auto_now_add=True)
     expected_return_date = models.DateField()
     actual_return_date = models.DateField(null=True, blank=True)
-    book_id = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="borrowed")
-    user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="borrowed")
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="borrowed")
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="borrowed")
 
     def __str__(self):
         return f"{self.borrow_date} - {self.expected_return_date} - {self.actual_return_date}"
