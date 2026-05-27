@@ -8,6 +8,4 @@ app_name = "books"
 router = routers.DefaultRouter()
 router.register("", BookViewSet, basename="books")
 
-urlpatterns = [
-    path("", include(router.urls))
-]
+urlpatterns = [path("", include(router.urls))]
