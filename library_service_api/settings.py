@@ -24,6 +24,10 @@ load_dotenv()
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+
+CHAT_ID = os.getenv("CHAT_ID")
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
