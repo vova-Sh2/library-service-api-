@@ -11,15 +11,35 @@ from borrowings.models import Borrowing
 class BorrowingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Borrowing
-        fields = ("id", "borrow_date", "expected_return_date", "actual_return_date", "book", "user")
-        read_only_fields = ("expected_return_date","book", "user", "actual_return_date")
+        fields = (
+            "id",
+            "borrow_date",
+            "expected_return_date",
+            "actual_return_date",
+            "book",
+            "user",
+        )
+        read_only_fields = (
+            "expected_return_date",
+            "book",
+            "user",
+            "actual_return_date",
+        )
 
 
 class BorrowingsDetailSerializer(serializers.ModelSerializer):
     book = BookSerializer(read_only=True)
+
     class Meta:
         model = Borrowing
-        fields = ("id", "borrow_date", "expected_return_date", "actual_return_date", "book", "user")
+        fields = (
+            "id",
+            "borrow_date",
+            "expected_return_date",
+            "actual_return_date",
+            "book",
+            "user",
+        )
 
 
 class BorrowingsCreateSerializer(serializers.ModelSerializer):
@@ -39,7 +59,7 @@ class BorrowingsCreateSerializer(serializers.ModelSerializer):
         return value
 
     @transaction.atomic
-    def create(self,validated_data):
+    def create(self, validated_data):
         book = validated_data["book"]
         book.inventory -= 1
         book.save()
