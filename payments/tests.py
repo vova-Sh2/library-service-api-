@@ -70,12 +70,10 @@ class PaymentTests(TestCase):
         )
 
     def test_list_payments_unauthorized(self):
-        """Неавторизований не може переглядати платежі"""
         res = self.client.get(PAYMENTS_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_list_payments_user_sees_only_own(self):
-        """Користувач бачить тільки свої платежі"""
         self.client.force_authenticate(self.user)
         res = self.client.get(PAYMENTS_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -83,7 +81,6 @@ class PaymentTests(TestCase):
         self.assertEqual(res.data[0]["id"], self.payment.id)
 
     def test_list_payments_user_not_sees_others(self):
-        """Користувач не бачить чужі платежі"""
         self.client.force_authenticate(self.other_user)
         res = self.client.get(PAYMENTS_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -91,14 +88,12 @@ class PaymentTests(TestCase):
         self.assertEqual(res.data[0]["id"], self.other_payment.id)
 
     def test_list_payments_admin_sees_all(self):
-        """Адмін бачить всі платежі"""
         self.client.force_authenticate(self.admin)
         res = self.client.get(PAYMENTS_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), 2)
 
     def test_retrieve_payment_detail_user(self):
-        """Користувач може переглянути деталі свого платежу"""
         self.client.force_authenticate(self.user)
         res = self.client.get(detail_url(self.payment.id))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -106,21 +101,17 @@ class PaymentTests(TestCase):
         self.assertIn("session_id", res.data)
 
     def test_retrieve_other_user_payment(self):
-        """Користувач не може переглянути чужий платіж"""
         self.client.force_authenticate(self.user)
         res = self.client.get(detail_url(self.other_payment.id))
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_retrieve_payment_admin(self):
-        """Адмін може переглянути будь-який платіж"""
         self.client.force_authenticate(self.admin)
         res = self.client.get(detail_url(self.other_payment.id))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     def test_payment_status_pending_by_default(self):
-        """Новий платіж має статус PENDING"""
         self.assertEqual(self.payment.status, Payment.TypeChoices.PENDING)
 
     def test_payment_has_correct_borrowing(self):
-        """Платіж прив'язаний до правильного позичання"""
         self.assertEqual(self.payment.borrowing, self.borrowing)

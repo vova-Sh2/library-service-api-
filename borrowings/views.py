@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.utils.timezone import now
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -38,6 +39,16 @@ class BorrowingViewSet(ModelViewSet):
             f"📆 Expected return date: {borrowing.expected_return_date}"
         )
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter("is_active", bool, description="Filter active borrowings"),
+            OpenApiParameter("user_id", int, description="Filter by user (admin only)"),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """Get list of borrowed books"""
+        return super().list(request, *args, **kwargs)
+
     def get_queryset(self):
         user = self.request.user
         queryset = Borrowing.objects.all()
@@ -46,9 +57,11 @@ class BorrowingViewSet(ModelViewSet):
             if user_id:
                 queryset = queryset.filter(user_id=user_id)
         is_active = self.request.query_params.get("is_active")
-        if is_active == "True":
+        print(type(is_active))
+        print(queryset.filter(actual_return_date__isnull=True))
+        if is_active.lower() == "true":
             queryset = queryset.filter(actual_return_date__isnull=True)
-        elif is_active == "False":
+        elif is_active.lower() == "false":
             queryset = queryset.filter(actual_return_date__isnull=False)
         if not user.is_staff:
             queryset = queryset.filter(user=user.id)
@@ -61,6 +74,14 @@ class BorrowingViewSet(ModelViewSet):
             return BorrowingCreateSerializer
         return BorrowingsListSerializer
 
+    @extend_schema(
+        description="Return a borrowed book. Sets actual return date and increases book inventory by 1.",
+        request=None,
+        responses={
+            200: BorrowingDetailSerializer,
+            400: {"description": "Borrowing already returned"},
+        },
+    )
     @action(
         methods=["POST"],
         detail=True,
@@ -71,7 +92,7 @@ class BorrowingViewSet(ModelViewSet):
 
         if borrowing.actual_return_date is not None:
             return Response(
-                {"detail": "This field is required."},
+                {"detail": "Borrowing already returned"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         with transaction.atomic():

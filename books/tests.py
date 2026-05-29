@@ -26,12 +26,10 @@ class BookTests(TestCase):
         )
 
     def test_list_books_unauthorized(self):
-        """Всі можуть переглядати список книг"""
         res = self.client.get("/api/books/")
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     def test_create_book_admin(self):
-        """Тільки адмін може створювати книги"""
         self.client.force_authenticate(self.admin)
         payload = {
             "title": "New Book",
@@ -45,7 +43,6 @@ class BookTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
     def test_create_book_unauthorized(self):
-        """Звичайний користувач не може створювати книги"""
         self.client.force_authenticate(self.user)
         payload = {
             "title": "New Book",
@@ -58,7 +55,6 @@ class BookTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_book_admin(self):
-        """Тільки адмін може видаляти книги"""
         self.client.force_authenticate(self.admin)
         res = self.client.delete(f"/api/books/{self.book.id}/")
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
