@@ -31,7 +31,6 @@ class BorrowingTests(TestCase):
     @patch("borrowings.views.create_stripe_session")
     @patch("borrowings.views.bot_message.send_message")
     def test_create_borrowing(self, mock_telegram, mock_stripe):
-        """Створення позичання зменшує інвентар"""
         self.client.force_authenticate(self.user)
         payload = {
             "expected_return_date": "2026-06-10",
@@ -45,7 +44,6 @@ class BorrowingTests(TestCase):
     @patch("borrowings.views.create_stripe_session")
     @patch("borrowings.views.bot_message.send_message")
     def test_create_borrowing_no_inventory(self, mock_telegram, mock_stripe):
-        """Не можна позичити книгу з інвентарем 0"""
         self.book.inventory = 0
         self.book.save()
         self.client.force_authenticate(self.user)
@@ -76,7 +74,6 @@ class BorrowingTests(TestCase):
         self.assertEqual(self.book.inventory, 5)  # повернувся
 
     def test_user_sees_only_own_borrowings(self):
-        """Користувач бачить тільки свої позичання"""
         other_user = User.objects.create_user(
             email="other@test.com",
             password="testpass123"
