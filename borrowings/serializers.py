@@ -48,6 +48,7 @@ class BorrowingDetailSerializer(serializers.ModelSerializer):
 
 class BorrowingCreateSerializer(serializers.ModelSerializer):
     payments = PaymentURLSerializer(many=True, read_only=True)
+
     class Meta:
         model = Borrowing
         fields = ("id", "expected_return_date", "book", "payments")

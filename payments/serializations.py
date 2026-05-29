@@ -14,6 +14,7 @@ class BorrowingPaymentListSerializer(PaymentSerializer):
         model = Payment
         fields = ("id", "status", "type", "money_to_pay")
 
+
 class CreatePaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
@@ -23,7 +24,16 @@ class CreatePaymentSerializer(serializers.ModelSerializer):
 class PaymentDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ("id", "status", "type", "borrowing", "session_url", "session_id", "money_to_pay")
+        fields = (
+            "id",
+            "status",
+            "type",
+            "borrowing",
+            "session_url",
+            "session_id",
+            "money_to_pay",
+        )
+
 
 class PaymentURLSerializer(serializers.ModelSerializer):
     class Meta:

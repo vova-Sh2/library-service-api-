@@ -23,7 +23,7 @@ def create_payment(borrowing, **params):
         "borrowing": borrowing,
         "session_url": "https://checkout.stripe.com/test",
         "session_id": "cs_test_123",
-        "money_to_pay": "14.00"
+        "money_to_pay": "14.00",
     }
     defaults.update(params)
     return Payment.objects.create(**defaults)
@@ -33,40 +33,36 @@ class PaymentTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.admin = User.objects.create_superuser(
-            email="admin@test.com",
-            password="testpass123"
+            email="admin@test.com", password="testpass123"
         )
         self.user = User.objects.create_user(
-            email="user@test.com",
-            password="testpass123"
+            email="user@test.com", password="testpass123"
         )
         self.other_user = User.objects.create_user(
-            email="other@test.com",
-            password="testpass123"
+            email="other@test.com", password="testpass123"
         )
         self.book = Book.objects.create(
             title="Test Book",
             author="Test Author",
             cover=Book.ChoicesCover.HARD,
             inventory=5,
-            daily_fee="2.00"
+            daily_fee="2.00",
         )
         self.borrowing = Borrowing.objects.create(
             borrow_date=datetime.date.today(),
             expected_return_date=datetime.date.today() + datetime.timedelta(days=7),
             book=self.book,
-            user=self.user
+            user=self.user,
         )
         self.other_borrowing = Borrowing.objects.create(
             borrow_date=datetime.date.today(),
             expected_return_date=datetime.date.today() + datetime.timedelta(days=5),
             book=self.book,
-            user=self.other_user
+            user=self.other_user,
         )
         self.payment = create_payment(self.borrowing)
         self.other_payment = create_payment(
-            self.other_borrowing,
-            session_id="cs_test_456"
+            self.other_borrowing, session_id="cs_test_456"
         )
 
     def test_list_payments_unauthorized(self):
