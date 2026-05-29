@@ -4,6 +4,7 @@ from payments.models import Payment
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
+
 def create_stripe_session(borrowing):
     days = (borrowing.expected_return_date - borrowing.borrow_date).days
     total_price = int(borrowing.book.daily_fee * 100)
@@ -13,9 +14,7 @@ def create_stripe_session(borrowing):
             {
                 "price_data": {
                     "currency": "usd",
-                    "product_data": {
-                        "name": borrowing.book.title
-                    },
+                    "product_data": {"name": borrowing.book.title},
                     "unit_amount": total_price,
                 },
                 "quantity": 1,

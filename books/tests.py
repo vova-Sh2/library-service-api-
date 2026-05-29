@@ -6,23 +6,22 @@ from books.models import Book
 
 User = get_user_model()
 
+
 class BookTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.admin = User.objects.create_superuser(
-            email="admin@test.com",
-            password="testpass123"
+            email="admin@test.com", password="testpass123"
         )
         self.user = User.objects.create_user(
-            email="user@test.com",
-            password="testpass123"
+            email="user@test.com", password="testpass123"
         )
         self.book = Book.objects.create(
             title="Test Book",
             author="Test Author",
             cover=Book.ChoicesCover.HARD,
             inventory=5,
-            daily_fee="1.50"
+            daily_fee="1.50",
         )
 
     def test_list_books_unauthorized(self):
@@ -36,7 +35,7 @@ class BookTests(TestCase):
             "author": "New Author",
             "cover": "Hard",
             "inventory": 3,
-            "daily_fee": "2.00"
+            "daily_fee": "2.00",
         }
         res = self.client.post("/api/books/", payload)
         print(res.data)
@@ -49,7 +48,7 @@ class BookTests(TestCase):
             "author": "New Author",
             "cover": "Hard",
             "inventory": 3,
-            "daily_fee": "2.00"
+            "daily_fee": "2.00",
         }
         res = self.client.post("/api/books/", payload)
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)

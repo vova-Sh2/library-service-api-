@@ -9,33 +9,29 @@ from unittest.mock import patch
 
 User = get_user_model()
 
+
 class BorrowingTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = User.objects.create_user(
-            email="user@test.com",
-            password="testpass123"
+            email="user@test.com", password="testpass123"
         )
         self.admin = User.objects.create_superuser(
-            email="admin@test.com",
-            password="testpass123"
+            email="admin@test.com", password="testpass123"
         )
         self.book = Book.objects.create(
             title="Test Book",
             author="Test Author",
             cover=Book.ChoicesCover.HARD,
             inventory=5,
-            daily_fee="1.50"
+            daily_fee="1.50",
         )
 
     @patch("borrowings.views.create_stripe_session")
     @patch("borrowings.views.bot_message.send_message")
     def test_create_borrowing(self, mock_telegram, mock_stripe):
         self.client.force_authenticate(self.user)
-        payload = {
-            "expected_return_date": "2026-06-10",
-            "book": self.book.id
-        }
+        payload = {"expected_return_date": "2026-06-10", "book": self.book.id}
         res = self.client.post("/api/borrowings/", payload)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.book.refresh_from_db()
@@ -47,10 +43,7 @@ class BorrowingTests(TestCase):
         self.book.inventory = 0
         self.book.save()
         self.client.force_authenticate(self.user)
-        payload = {
-            "expected_return_date": "2026-06-10",
-            "book": self.book.id
-        }
+        payload = {"expected_return_date": "2026-06-10", "book": self.book.id}
         res = self.client.post("/api/borrowings/", payload)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -63,7 +56,7 @@ class BorrowingTests(TestCase):
             borrow_date=datetime.date.today(),
             expected_return_date=datetime.date.today() + datetime.timedelta(days=7),
             book=self.book,
-            user=self.user
+            user=self.user,
         )
         self.book.inventory -= 1
         self.book.save()
@@ -75,14 +68,13 @@ class BorrowingTests(TestCase):
 
     def test_user_sees_only_own_borrowings(self):
         other_user = User.objects.create_user(
-            email="other@test.com",
-            password="testpass123"
+            email="other@test.com", password="testpass123"
         )
         Borrowing.objects.create(
             borrow_date=datetime.date.today(),
             expected_return_date=datetime.date.today() + datetime.timedelta(days=7),
             book=self.book,
-            user=other_user
+            user=other_user,
         )
         self.client.force_authenticate(self.user)
         res = self.client.get("/api/borrowings/")
