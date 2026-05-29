@@ -3,7 +3,7 @@ from django.db import models
 from borrowings.models import Borrowing
 
 
-class Payments(models.Model):
+class Payment(models.Model):
     class StausChoices(models.TextChoices):
         PENDING = "Pending"
         PAID = "Paid"
