@@ -15,4 +15,4 @@ class Borrowing(models.Model):
     )
 
     def __str__(self):
-        return f"{self.borrow_date} - {self.expected_return_date} - {self.actual_return_date}"
+        return f"{self.book.title}, expected return {self.expected_return_date}"

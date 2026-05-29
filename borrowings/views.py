@@ -8,33 +8,35 @@ from rest_framework.viewsets import ModelViewSet
 
 from borrowings.models import Borrowing
 from borrowings.serializers import (
-    BorrowingsDetailSerializer,
-    BorrowingsCreateSerializer,
-    BorrowingsSerializer,
+    BorrowingDetailSerializer,
+    BorrowingCreateSerializer,
+    BorrowingsListSerializer,
 )
 
 from notifications import bot_message
+from payments.stripe_session import create_stripe_session
 
 
 class BorrowingViewSet(ModelViewSet):
     queryset = Borrowing.objects.all()
-    serializer_class = BorrowingsSerializer
+    serializer_class = BorrowingsListSerializer
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        post = serializer.save(user=self.request.user)
+        borrowing = serializer.save(user=self.request.user)
+        create_stripe_session(borrowing)
 
         bot_message.send_message(
             f"📚 Borrowed\n"
-            f"👤 User: {post.user.email}\n"
-            f"🪪 First Name: {post.user.first_name}\n"
-            f"🪪 Last Name: {post.user.last_name}\n"
-            f"📖 Book: {post.book.title}\n"
-            f"📦 Inventory: {post.book.inventory}\n"
-            f"📆 Borrow date: {post.borrow_date}\n"
-            f"📆 Expected return date: {post.expected_return_date}"
+            f"👤 User: {borrowing.user.email}\n"
+            f"🪪 First Name: {borrowing.user.first_name}\n"
+            f"🪪 Last Name: {borrowing.user.last_name}\n"
+            f"📖 Book: {borrowing.book.title}\n"
+            f"📦 Inventory: {borrowing.book.inventory}\n"
+            f"📆 Borrow date: {borrowing.borrow_date}\n"
+            f"📆 Expected return date: {borrowing.expected_return_date}"
         )
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -57,10 +59,10 @@ class BorrowingViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         if self.action == "retrieve":
-            return BorrowingsDetailSerializer
+            return BorrowingDetailSerializer
         if self.action == "create":
-            return BorrowingsCreateSerializer
-        return BorrowingsSerializer
+            return BorrowingCreateSerializer
+        return BorrowingsListSerializer
 
     @action(
         methods=["POST"],
