@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework",
     "django_celery_beat",
+    "payments",
     "borrowings",
     "books",
     "user",
