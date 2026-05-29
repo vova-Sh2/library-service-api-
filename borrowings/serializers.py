@@ -4,11 +4,13 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from books.serializers import BookSerializer
+from books.serializers import BooksSerializer
 from borrowings.models import Borrowing
 
+from payments.serializations import BorrowingPaymentListSerializer, PaymentURLSerializer
 
-class BorrowingsSerializer(serializers.ModelSerializer):
+
+class BorrowingsListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Borrowing
         fields = (
@@ -17,7 +19,6 @@ class BorrowingsSerializer(serializers.ModelSerializer):
             "expected_return_date",
             "actual_return_date",
             "book",
-            "user",
         )
         read_only_fields = (
             "expected_return_date",
@@ -27,8 +28,9 @@ class BorrowingsSerializer(serializers.ModelSerializer):
         )
 
 
-class BorrowingsDetailSerializer(serializers.ModelSerializer):
-    book = BookSerializer(read_only=True)
+class BorrowingDetailSerializer(serializers.ModelSerializer):
+    payments = BorrowingPaymentListSerializer(many=True, read_only=True)
+    book = BooksSerializer(read_only=True)
 
     class Meta:
         model = Borrowing
@@ -39,13 +41,15 @@ class BorrowingsDetailSerializer(serializers.ModelSerializer):
             "actual_return_date",
             "book",
             "user",
+            "payments",
         )
 
 
-class BorrowingsCreateSerializer(serializers.ModelSerializer):
+class BorrowingCreateSerializer(serializers.ModelSerializer):
+    payments = PaymentURLSerializer(many=True, read_only=True)
     class Meta:
         model = Borrowing
-        fields = ("id", "expected_return_date", "book")
+        fields = ("id", "expected_return_date", "book", "payments")
 
     def validate_book(self, book):
         if book.inventory == 0:
