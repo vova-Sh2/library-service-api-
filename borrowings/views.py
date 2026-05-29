@@ -22,10 +22,9 @@ class BorrowingViewSet(ModelViewSet):
     serializer_class = BorrowingsListSerializer
     permission_classes = [IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+    def perform_create(self, serializer):
         borrowing = serializer.save(user=self.request.user)
+
         create_stripe_session(borrowing)
 
         bot_message.send_message(
@@ -38,8 +37,6 @@ class BorrowingViewSet(ModelViewSet):
             f"📆 Borrow date: {borrowing.borrow_date}\n"
             f"📆 Expected return date: {borrowing.expected_return_date}"
         )
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get_queryset(self):
         user = self.request.user

@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 from books.serializers import BooksSerializer
 from borrowings.models import Borrowing
 
-from payments.serializations import BorrowingPaymentListSerializer
+from payments.serializations import BorrowingPaymentListSerializer, PaymentURLSerializer
 
 
 class BorrowingsListSerializer(serializers.ModelSerializer):
@@ -46,9 +46,10 @@ class BorrowingDetailSerializer(serializers.ModelSerializer):
 
 
 class BorrowingCreateSerializer(serializers.ModelSerializer):
+    payments = PaymentURLSerializer(many=True, read_only=True)
     class Meta:
         model = Borrowing
-        fields = ("id", "expected_return_date", "book")
+        fields = ("id", "expected_return_date", "book", "payments")
 
     def validate_book(self, book):
         if book.inventory == 0:
