@@ -1,4 +1,58 @@
-[
+[{
+    "model": "books.book",
+    "pk": 1,
+    "fields": {
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "cover": "HARD",
+      "inventory": 5,
+      "daily_fee": "1.50"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 2,
+    "fields": {
+      "title": "To Kill a Mockingbird",
+      "author": "Harper Lee",
+      "cover": "SOFT",
+      "inventory": 3,
+      "daily_fee": "1.00"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 3,
+    "fields": {
+      "title": "1984",
+      "author": "George Orwell",
+      "cover": "HARD",
+      "inventory": 7,
+      "daily_fee": "2.00"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 4,
+    "fields": {
+      "title": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "cover": "SOFT",
+      "inventory": 4,
+      "daily_fee": "1.25"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 5,
+    "fields": {
+      "title": "The Catcher in the Rye",
+      "author": "J.D. Salinger",
+      "cover": "SOFT",
+      "inventory": 2,
+      "daily_fee": "1.75"
+    }
+  },
   {
     "model": "user.user",
     "pk": 1,
@@ -9,6 +63,110 @@
       "is_staff": true,
       "is_superuser": true,
       "password": "pbkdf2_sha256$1200000$JRM4WVEZJ7QvaZdjnwTMxD$Q9Kq7bGzFW+fdmNG55mQPsiFgZf39oK46O19Y1/+XKY="
+    }
+  },
+  {
+    "model": "user.user",
+    "pk": 2,
+    "fields": {
+      "email": "john@example.com",
+      "first_name": "John",
+      "last_name": "Doe",
+      "is_staff": false,
+      "is_superuser": false,
+      "password": "pbkdf2_sha256$600000$test$hashedpassword=="
+    }
+  },
+   {
+    "model": "user.user",
+    "pk": 3,
+    "fields": {
+      "email": "jane@example.com",
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "is_staff": false,
+      "is_superuser": false,
+      "password": "pbkdf2_sha256$600000$test$hashedpassword=="
+    }
+  },
+   {
+    "model": "borrowings.borrowing",
+    "pk": 1,
+    "fields": {
+      "borrow_date": "2026-05-01",
+      "expected_return_date": "2026-05-10",
+      "actual_return_date": "2026-05-09",
+      "book": 1,
+      "user": 2
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 2,
+    "fields": {
+      "borrow_date": "2026-05-15",
+      "expected_return_date": "2026-05-25",
+      "actual_return_date": null,
+      "book": 2,
+      "user": 2
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 3,
+    "fields": {
+      "borrow_date": "2026-05-20",
+      "expected_return_date": "2026-05-28",
+      "actual_return_date": null,
+      "book": 3,
+      "user": 3
+    }
+  },
+  {
+    "model": "borrowings.borrowing",
+    "pk": 4,
+    "fields": {
+      "borrow_date": "2026-04-01",
+      "expected_return_date": "2026-04-10",
+      "actual_return_date": null,
+      "book": 4,
+      "user": 3
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 1,
+    "fields": {
+      "status": "PAID",
+      "type": "PAYMENT",
+      "borrowing": 1,
+      "session_url": "https://checkout.stripe.com/pay/test_session_1",
+      "session_id": "cs_test_session_1",
+      "money_to_pay": "13.50"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 2,
+    "fields": {
+      "status": "PENDING",
+      "type": "PAYMENT",
+      "borrowing": 2,
+      "session_url": "https://checkout.stripe.com/pay/test_session_2",
+      "session_id": "cs_test_session_2",
+      "money_to_pay": "10.00"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 3,
+    "fields": {
+      "status": "PENDING",
+      "type": "FINE",
+      "borrowing": 4,
+      "session_url": "https://checkout.stripe.com/pay/test_session_3",
+      "session_id": "cs_test_session_3",
+      "money_to_pay": "22.50"
     }
   }
 ]
